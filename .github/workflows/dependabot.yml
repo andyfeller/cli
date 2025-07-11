@@ -1,0 +1,37 @@
+name: Dependabot
+on:
+  pull_request:
+    types:
+      - opened
+permissions:
+  contents: write
+jobs:
+  licenses:
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.user.login == 'dependabot[bot]' && github.event.pull_request.head.repo.fork == false
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: 'go.mod'
+
+      - name: Regenerate licenses
+        run: |
+          export GOROOT=$(go env GOROOT)
+          export PATH=${GOROOT}/bin:$PATH
+          go install github.com/google/go-licenses@5348b744d0983d85713295ea08a20cca1654a45e
+          make licenses
+
+      - name: Commit and push changes
+        run: |
+          if git diff --staged --quiet; then
+            echo "No third-party license changes to commit"
+          else
+            git config --local user.name "github-actions[bot]"
+            git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git commit -m "Generate licenses - $GITHUB_SHA"
+            git push origin "$BRANCH"
+          fi
