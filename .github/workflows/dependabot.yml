@@ -38,5 +38,6 @@ jobs:
             git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
             git add third-party third-party-licenses.*.md
             git commit -m "Generate licenses - $GITHUB_SHA"
+            git pull
             git push
           fi
