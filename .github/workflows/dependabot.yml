@@ -28,6 +28,7 @@ jobs:
           export PATH=${GOROOT}/bin:$PATH
           go install github.com/google/go-licenses@5348b744d0983d85713295ea08a20cca1654a45e
           make licenses
+          git diff
 
       - name: Commit and push changes
         run: |
