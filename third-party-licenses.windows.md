@@ -138,7 +138,7 @@ Some packages may only be included on certain architectures or operating systems
 - [github.com/shopspring/decimal](https://pkg.go.dev/github.com/shopspring/decimal) ([MIT](https://github.com/shopspring/decimal/blob/v1.4.0/LICENSE))
 - [github.com/shurcooL/githubv4](https://pkg.go.dev/github.com/shurcooL/githubv4) ([MIT](https://github.com/shurcooL/githubv4/blob/48295856cce7/LICENSE))
 - [github.com/shurcooL/graphql](https://pkg.go.dev/github.com/shurcooL/graphql) ([MIT](https://github.com/shurcooL/graphql/blob/ed46e5a46466/LICENSE))
-- [github.com/sigstore/protobuf-specs/gen/pb-go](https://pkg.go.dev/github.com/sigstore/protobuf-specs/gen/pb-go) ([Apache-2.0](https://github.com/sigstore/protobuf-specs/blob/v0.4.3/LICENSE))
+- [github.com/sigstore/protobuf-specs/gen/pb-go](https://pkg.go.dev/github.com/sigstore/protobuf-specs/gen/pb-go) ([Apache-2.0](https://github.com/sigstore/protobuf-specs/blob/v0.5.0/LICENSE))
 - [github.com/sigstore/rekor/pkg](https://pkg.go.dev/github.com/sigstore/rekor/pkg) ([Apache-2.0](https://github.com/sigstore/rekor/blob/v1.3.10/LICENSE))
 - [github.com/sigstore/sigstore-go/pkg](https://pkg.go.dev/github.com/sigstore/sigstore-go/pkg) ([Apache-2.0](https://github.com/sigstore/sigstore-go/blob/v1.0.0/LICENSE))
 - [github.com/sigstore/sigstore/pkg](https://pkg.go.dev/github.com/sigstore/sigstore/pkg) ([Apache-2.0](https://github.com/sigstore/sigstore/blob/v1.9.5/LICENSE))
