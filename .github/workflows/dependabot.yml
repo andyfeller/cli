@@ -48,3 +48,5 @@ jobs:
   licenses-check:
     needs: licenses
     uses: ./.github/workflows/licenses-check.yml
+    with:
+      ref: ${{ github.head_ref }}
