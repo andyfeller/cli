@@ -51,14 +51,8 @@ jobs:
         with:
           version: v2.1.6
 
-      # actions/setup-go does not setup the installed toolchain to be preferred over the system install,
-      # which causes go-licenses to raise "Package ... does not have module info" errors.
-      # for more information, https://github.com/google/go-licenses/issues/244#issuecomment-1885098633
-      #
-      # go-licenses has been pinned for automation use.
-      - name: Check licenses
-        run: |
-          export GOROOT=$(go env GOROOT)
-          export PATH=${GOROOT}/bin:$PATH
-          go install github.com/google/go-licenses@5348b744d0983d85713295ea08a20cca1654a45e
-          make licenses-check
+  licenses-check:
+    needs: lint
+    uses: ./.github/workflows/licenses-check.yml
+    with:
+      ref: ${{ github.ref }}

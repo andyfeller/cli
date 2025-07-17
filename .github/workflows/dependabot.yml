@@ -44,3 +44,7 @@ jobs:
             git pull
             git push origin
           fi
+
+  licenses-check:
+    needs: licenses
+    uses: ./.github/workflows/licenses-check.yml
