@@ -180,7 +180,7 @@ Some packages may only be included on certain architectures or operating systems
 - [golang.org/x/text](https://pkg.go.dev/golang.org/x/text) ([BSD-3-Clause](https://cs.opensource.google/go/x/text/+/v0.26.0:LICENSE))
 - [google.golang.org/genproto/googleapis/api](https://pkg.go.dev/google.golang.org/genproto/googleapis/api) ([Apache-2.0](https://github.com/googleapis/go-genproto/blob/513f23925822/googleapis/api/LICENSE))
 - [google.golang.org/genproto/googleapis/rpc/status](https://pkg.go.dev/google.golang.org/genproto/googleapis/rpc/status) ([Apache-2.0](https://github.com/googleapis/go-genproto/blob/513f23925822/googleapis/rpc/LICENSE))
-- [google.golang.org/grpc](https://pkg.go.dev/google.golang.org/grpc) ([Apache-2.0](https://github.com/grpc/grpc-go/blob/v1.73.0/LICENSE))
+- [google.golang.org/grpc](https://pkg.go.dev/google.golang.org/grpc) ([Apache-2.0](https://github.com/grpc/grpc-go/blob/v1.74.0/LICENSE))
 - [google.golang.org/protobuf](https://pkg.go.dev/google.golang.org/protobuf) ([BSD-3-Clause](https://github.com/protocolbuffers/protobuf-go/blob/v1.36.6/LICENSE))
 - [gopkg.in/yaml.v3](https://pkg.go.dev/gopkg.in/yaml.v3) ([MIT](https://github.com/go-yaml/yaml/blob/v3.0.1/LICENSE))
 
