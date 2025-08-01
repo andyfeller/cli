@@ -4,7 +4,8 @@ The following open source dependencies are used to build the [cli/cli][] GitHub 
 
 ## Go Packages
 
-Some packages may only be included on certain architectures or operating systems.
+> [!NOTE]
+> Some packages may only be included on certain architectures or operating systems.
 
 
 - [al.essio.dev/pkg/shellescape](https://pkg.go.dev/al.essio.dev/pkg/shellescape) ([MIT](https://github.com/alessio/shellescape/blob/v1.6.0/LICENSE))

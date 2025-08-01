@@ -4,7 +4,8 @@ The following open source dependencies are used to build the [cli/cli][] GitHub 
 
 ## Go Packages
 
-Some packages may only be included on certain architectures or operating systems.
+> [!NOTE]
+> Some packages may only be included on certain architectures or operating systems.
 
 
 - [dario.cat/mergo](https://pkg.go.dev/dario.cat/mergo) ([BSD-3-Clause](https://github.com/imdario/mergo/blob/v1.0.2/LICENSE))
