@@ -4,10 +4,11 @@ on:
     branches:
       - trunk
     paths:
+      - .github/licenses.tmpl
+      - .github/workflows/third-party-licenses.yml
       - go.mod
       - go.sum
-      - ".github/licenses.tmpl"
-      - "script/licenses*"
+      - script/licenses*
 jobs:
   # This job is responsible for updating the third-party license reports and source code.
   # It should be safe to cancel as the latest version of `go.mod` should be checked in.
