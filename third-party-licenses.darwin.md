@@ -24,7 +24,7 @@ Some packages may only be included on certain architectures or operating systems
 - [github.com/briandowns/spinner](https://pkg.go.dev/github.com/briandowns/spinner) ([Apache-2.0](https://github.com/briandowns/spinner/blob/v1.23.2/LICENSE))
 - [github.com/catppuccin/go](https://pkg.go.dev/github.com/catppuccin/go) ([MIT](https://github.com/catppuccin/go/blob/v0.3.0/LICENSE))
 - [github.com/cenkalti/backoff/v4](https://pkg.go.dev/github.com/cenkalti/backoff/v4) ([MIT](https://github.com/cenkalti/backoff/blob/v4.3.0/LICENSE))
-- [github.com/cenkalti/backoff/v5](https://pkg.go.dev/github.com/cenkalti/backoff/v5) ([MIT](https://github.com/cenkalti/backoff/blob/v5.0.2/LICENSE))
+- [github.com/cenkalti/backoff/v5](https://pkg.go.dev/github.com/cenkalti/backoff/v5) ([MIT](https://github.com/cenkalti/backoff/blob/v5.0.3/LICENSE))
 - [github.com/charmbracelet/bubbles](https://pkg.go.dev/github.com/charmbracelet/bubbles) ([MIT](https://github.com/charmbracelet/bubbles/blob/v0.21.0/LICENSE))
 - [github.com/charmbracelet/bubbletea](https://pkg.go.dev/github.com/charmbracelet/bubbletea) ([MIT](https://github.com/charmbracelet/bubbletea/blob/v1.3.5/LICENSE))
 - [github.com/charmbracelet/colorprofile](https://pkg.go.dev/github.com/charmbracelet/colorprofile) ([MIT](https://github.com/charmbracelet/colorprofile/blob/v0.3.1/LICENSE))
