@@ -1,23 +1,28 @@
-name: Dependabot
+name: Third Party Licenses
 on:
-  pull_request:
-    types:
-      - opened
-      - reopened
-      - synchronize
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-permissions:
-  contents: write
+  push:
+    branches:
+      - trunk
+    paths:
+      - go.mod
+      - go.sum
+      - ".github/licenses.tmpl"
+      - "script/licenses*"
 jobs:
-  licenses:
+  # This job is responsible for updating the third-party license reports and source code.
+  # It should be safe to cancel as the latest version of `go.mod` should be checked in.
+  regenerate-licenses:
     runs-on: ubuntu-latest
-    if: ${{ !github.event.pull_request.head.repo.fork && github.actor == 'dependabot[bot]' }}
+    concurrency:
+      group: ${{ github.workflow }}
+      cancel-in-progress: true
+    permissions:
+      contents: write
     steps:
       - name: Check out code
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.head_ref }}
+          ref: trunk
 
       - name: Set up Go
         uses: actions/setup-go@v5
@@ -44,9 +49,3 @@ jobs:
             git pull
             git push origin
           fi
-
-  licenses-check:
-    needs: licenses
-    uses: ./.github/workflows/licenses-check.yml
-    with:
-      ref: ${{ github.head_ref }}
