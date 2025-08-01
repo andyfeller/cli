@@ -160,7 +160,7 @@ Some packages may only be included on certain architectures or operating systems
 - [github.com/transparency-dev/merkle](https://pkg.go.dev/github.com/transparency-dev/merkle) ([Apache-2.0](https://github.com/transparency-dev/merkle/blob/v0.0.2/LICENSE))
 - [github.com/vbatts/tar-split/archive/tar](https://pkg.go.dev/github.com/vbatts/tar-split/archive/tar) ([BSD-3-Clause](https://github.com/vbatts/tar-split/blob/v0.12.1/LICENSE))
 - [github.com/xo/terminfo](https://pkg.go.dev/github.com/xo/terminfo) ([MIT](https://github.com/xo/terminfo/blob/abceb7e1c41e/LICENSE))
-- [github.com/yuin/goldmark](https://pkg.go.dev/github.com/yuin/goldmark) ([MIT](https://github.com/yuin/goldmark/blob/v1.7.12/LICENSE))
+- [github.com/yuin/goldmark](https://pkg.go.dev/github.com/yuin/goldmark) ([MIT](https://github.com/yuin/goldmark/blob/v1.7.13/LICENSE))
 - [github.com/yuin/goldmark-emoji](https://pkg.go.dev/github.com/yuin/goldmark-emoji) ([MIT](https://github.com/yuin/goldmark-emoji/blob/v1.0.6/LICENSE))
 - [github.com/zalando/go-keyring](https://pkg.go.dev/github.com/zalando/go-keyring) ([MIT](https://github.com/zalando/go-keyring/blob/v0.2.6/LICENSE))
 - [go.mongodb.org/mongo-driver](https://pkg.go.dev/go.mongodb.org/mongo-driver) ([Apache-2.0](https://github.com/mongodb/mongo-go-driver/blob/v1.17.4/LICENSE))
