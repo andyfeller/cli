@@ -52,10 +52,10 @@ require (
 	github.com/theupdateframework/go-tuf/v2 v2.1.1
 	github.com/yuin/goldmark v1.7.13
 	github.com/zalando/go-keyring v0.2.6
-	golang.org/x/crypto v0.39.0
-	golang.org/x/sync v0.15.0
-	golang.org/x/term v0.32.0
-	golang.org/x/text v0.26.0
+	golang.org/x/crypto v0.45.0
+	golang.org/x/sync v0.18.0
+	golang.org/x/term v0.37.0
+	golang.org/x/text v0.31.0
 	google.golang.org/grpc v1.74.2
 	google.golang.org/protobuf v1.36.6
 	gopkg.in/h2non/gock.v1 v1.1.2
@@ -183,10 +183,10 @@ require (
 	go.uber.org/multierr v1.11.0 // indirect
 	go.uber.org/zap v1.27.0 // indirect
 	golang.org/x/exp v0.0.0-20250620022241-b7579e27df2b // indirect
-	golang.org/x/mod v0.25.0 // indirect
-	golang.org/x/net v0.41.0 // indirect
-	golang.org/x/sys v0.33.0 // indirect
-	golang.org/x/tools v0.34.0 // indirect
+	golang.org/x/mod v0.29.0 // indirect
+	golang.org/x/net v0.47.0 // indirect
+	golang.org/x/sys v0.38.0 // indirect
+	golang.org/x/tools v0.38.0 // indirect
 	google.golang.org/genproto/googleapis/api v0.0.0-20250603155806-513f23925822 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20250603155806-513f23925822 // indirect
 )
