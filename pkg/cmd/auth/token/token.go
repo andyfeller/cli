@@ -95,13 +95,11 @@ func tokenRun(opts *TokenOptions) error {
 		return errors.New(errMsg)
 	}
 
-	if val != "" {
-		fmt.Fprintf(opts.IO.Out, "%s\n", val)
-		if opts.Clipboard {
-			if err := clipboard.WriteAll(val); err != nil {
-				// Don't fail if clipboard write fails, just warn the user
-				fmt.Fprintf(opts.IO.ErrOut, "Warning: failed to copy token to clipboard: %v\n", err)
-			}
+	fmt.Fprintf(opts.IO.Out, "%s\n", val)
+	if opts.Clipboard {
+		if err := clipboard.WriteAll(val); err != nil {
+			// Don't fail if clipboard write fails, just warn the user
+			fmt.Fprintf(opts.IO.ErrOut, "Warning: failed to copy token to clipboard: %v\n", err)
 		}
 	}
 
