@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/MakeNowJust/heredoc"
+	"github.com/atotto/clipboard"
 	"github.com/cli/cli/v2/internal/gh"
 	"github.com/cli/cli/v2/pkg/cmdutil"
 	"github.com/cli/cli/v2/pkg/iostreams"
@@ -18,6 +19,7 @@ type TokenOptions struct {
 	Hostname      string
 	Username      string
 	SecureStorage bool
+	Clipboard     bool
 }
 
 func NewCmdToken(f *cmdutil.Factory, runF func(*TokenOptions) error) *cobra.Command {
@@ -50,6 +52,7 @@ func NewCmdToken(f *cmdutil.Factory, runF func(*TokenOptions) error) *cobra.Comm
 	cmd.Flags().StringVarP(&opts.Username, "user", "u", "", "The account to output the token for")
 	cmd.Flags().BoolVarP(&opts.SecureStorage, "secure-storage", "", false, "Search only secure credential store for authentication token")
 	_ = cmd.Flags().MarkHidden("secure-storage")
+	cmd.Flags().BoolVarP(&opts.Clipboard, "clipboard", "c", true, "Copy the token to the clipboard")
 
 	return cmd
 }
@@ -92,8 +95,12 @@ func tokenRun(opts *TokenOptions) error {
 		return errors.New(errMsg)
 	}
 
-	if val != "" {
-		fmt.Fprintf(opts.IO.Out, "%s\n", val)
+	fmt.Fprintf(opts.IO.Out, "%s\n", val)
+	if opts.Clipboard {
+		if err := clipboard.WriteAll(val); err != nil {
+			// Don't fail if clipboard write fails, just warn the user
+			fmt.Fprintf(opts.IO.ErrOut, "Warning: failed to copy token to clipboard: %v\n", err)
+		}
 	}
 
 	return nil

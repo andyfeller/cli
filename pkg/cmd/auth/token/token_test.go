@@ -23,32 +23,47 @@ func TestNewCmdToken(t *testing.T) {
 		{
 			name:   "no flags",
 			input:  "",
-			output: TokenOptions{},
+			output: TokenOptions{Clipboard: true}, // Default to true
 		},
 		{
 			name:   "with hostname",
 			input:  "--hostname github.mycompany.com",
-			output: TokenOptions{Hostname: "github.mycompany.com"},
+			output: TokenOptions{Hostname: "github.mycompany.com", Clipboard: true},
 		},
 		{
 			name:   "with user",
 			input:  "--user test-user",
-			output: TokenOptions{Username: "test-user"},
+			output: TokenOptions{Username: "test-user", Clipboard: true},
 		},
 		{
 			name:   "with shorthand user",
 			input:  "-u test-user",
-			output: TokenOptions{Username: "test-user"},
+			output: TokenOptions{Username: "test-user", Clipboard: true},
 		},
 		{
 			name:   "with shorthand hostname",
 			input:  "-h github.mycompany.com",
-			output: TokenOptions{Hostname: "github.mycompany.com"},
+			output: TokenOptions{Hostname: "github.mycompany.com", Clipboard: true},
 		},
 		{
 			name:   "with secure-storage",
 			input:  "--secure-storage",
-			output: TokenOptions{SecureStorage: true},
+			output: TokenOptions{SecureStorage: true, Clipboard: true},
+		},
+		{
+			name:   "with clipboard disabled",
+			input:  "--clipboard=false",
+			output: TokenOptions{Clipboard: false},
+		},
+		{
+			name:   "with clipboard enabled explicitly",
+			input:  "--clipboard",
+			output: TokenOptions{Clipboard: true},
+		},
+		{
+			name:   "with shorthand clipboard disabled",
+			input:  "-c=false",
+			output: TokenOptions{Clipboard: false},
 		},
 	}
 
@@ -88,6 +103,7 @@ func TestNewCmdToken(t *testing.T) {
 			require.NoError(t, err)
 			require.Equal(t, tt.output.Hostname, cmdOpts.Hostname)
 			require.Equal(t, tt.output.SecureStorage, cmdOpts.SecureStorage)
+			require.Equal(t, tt.output.Clipboard, cmdOpts.Clipboard)
 		})
 	}
 }
