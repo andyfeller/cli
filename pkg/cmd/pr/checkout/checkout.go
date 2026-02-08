@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"path/filepath"
 	"strings"
 
 	"github.com/MakeNowJust/heredoc"
@@ -33,7 +34,12 @@ type CheckoutOptions struct {
 	Force             bool
 	Detach            bool
 	BranchName        string
+	Worktree          *string
 }
+
+// defaultWorktreePath is a sentinel value indicating that --worktree was passed
+// without a value, meaning the worktree path should be auto-generated.
+const defaultWorktreePath = " "
 
 func NewCmdCheckout(f *cmdutil.Factory, runF func(*CheckoutOptions) error) *cobra.Command {
 	opts := &CheckoutOptions{
@@ -48,6 +54,20 @@ func NewCmdCheckout(f *cmdutil.Factory, runF func(*CheckoutOptions) error) *cobr
 	cmd := &cobra.Command{
 		Use:   "checkout [<number> | <url> | <branch>]",
 		Short: "Check out a pull request in git",
+		Long: heredoc.Docf(`
+			Check out a pull request in git.
+
+			By default, this command switches the current working directory to the pull request
+			branch by fetching the branch from the remote and checking it out locally.
+
+			When %[1]s--worktree%[1]s is used, instead of switching the current branch, a new git worktree
+			is created for the pull request. This allows reviewing multiple PRs simultaneously
+			without disrupting your current working directory. If no path is provided to
+			%[1]s--worktree%[1]s, the worktree is created in the parent directory with the name
+			%[1]s<repo>-<branch>%[1]s, where any slashes in the branch name are replaced with hyphens.
+
+			The %[1]s--worktree%[1]s flag cannot be combined with %[1]s--branch%[1]s or %[1]s--recurse-submodules%[1]s.
+		`, "`"),
 		Example: heredoc.Doc(`
 			# Interactively select a PR from the 10 most recent to check out
 			$ gh pr checkout
@@ -56,8 +76,15 @@ func NewCmdCheckout(f *cmdutil.Factory, runF func(*CheckoutOptions) error) *cobr
 			$ gh pr checkout 32
 			$ gh pr checkout https://github.com/OWNER/REPO/pull/32
 			$ gh pr checkout feature
+
+			# Checkout a PR into a new worktree next to the current repo directory
+			$ gh pr checkout 32 --worktree
+
+			# Checkout a PR into a worktree at a specific path
+			$ gh pr checkout 32 --worktree=/tmp/review-pr-32
 		`),
-		Args: cobra.MaximumNArgs(1),
+		Args:    cobra.MaximumNArgs(1),
+		Aliases: []string{"co"},
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if len(args) > 0 {
 				opts.PRResolver = &specificPRResolver{
@@ -96,6 +123,11 @@ func NewCmdCheckout(f *cmdutil.Factory, runF func(*CheckoutOptions) error) *cobr
 	cmd.Flags().BoolVarP(&opts.Force, "force", "f", false, "Reset the existing local branch to the latest state of the pull request")
 	cmd.Flags().BoolVarP(&opts.Detach, "detach", "", false, "Checkout PR with a detached HEAD")
 	cmd.Flags().StringVarP(&opts.BranchName, "branch", "b", "", "Local branch name to use (default [the name of the head branch])")
+	worktreeFlag := cmdutil.NilStringFlag(cmd, &opts.Worktree, "worktree", "", "Check out the pull request into a new git worktree at the given `path`")
+	worktreeFlag.NoOptDefVal = defaultWorktreePath
+
+	cmd.MarkFlagsMutuallyExclusive("branch", "worktree")
+	cmd.MarkFlagsMutuallyExclusive("recurse-submodules", "worktree")
 
 	return cmd
 }
@@ -133,6 +165,10 @@ func checkoutRun(opts *CheckoutOptions) error {
 		return fmt.Errorf("invalid branch name: %q", pr.HeadRefName)
 	}
 
+	if opts.Worktree != nil {
+		return checkoutWorktreeRun(opts, pr, baseRepo, baseURLOrName, headRemote, protocol)
+	}
+
 	var cmdQueue [][]string
 
 	if headRemote != nil {
@@ -164,6 +200,94 @@ func checkoutRun(opts *CheckoutOptions) error {
 	}
 
 	return nil
+}
+
+func checkoutWorktreeRun(opts *CheckoutOptions, pr *api.PullRequest, baseRepo ghrepo.Interface, baseURLOrName string, headRemote *cliContext.Remote, protocol string) error {
+	worktreePath := strings.TrimSpace(*opts.Worktree)
+	if worktreePath == "" {
+		topLevelDir, err := opts.GitClient.ToplevelDir(context.Background())
+		if err != nil {
+			return err
+		}
+		parentDir := filepath.Dir(topLevelDir)
+		repoDir := filepath.Base(topLevelDir)
+		// Replace forward slashes (git branch namespace separator) and OS-specific
+		// path separators to avoid creating nested directories.
+		safeBranch := strings.ReplaceAll(pr.HeadRefName, "/", "-")
+		if filepath.Separator != '/' {
+			safeBranch = strings.ReplaceAll(safeBranch, string(filepath.Separator), "-")
+		}
+		worktreePath = filepath.Join(parentDir, repoDir+"-"+safeBranch)
+	}
+
+	var cmdQueue [][]string
+
+	if headRemote != nil {
+		cmdQueue = append(cmdQueue, cmdsForWorktreeExistingRemote(headRemote, pr, opts, worktreePath)...)
+	} else {
+		ref := fmt.Sprintf("refs/pull/%d/head", pr.Number)
+		cmdQueue = append(cmdQueue, cmdsForWorktreeMissingRemote(pr, ref, baseURLOrName, opts, worktreePath)...)
+	}
+
+	err := executeCmds(opts.GitClient, git.CredentialPatternFromHost(baseRepo.RepoHost()), cmdQueue)
+	if err != nil {
+		return err
+	}
+
+	if opts.IO.IsStderrTTY() {
+		cs := opts.IO.ColorScheme()
+		fmt.Fprintf(opts.IO.ErrOut, "%s Created worktree in %s\n", cs.SuccessIcon(), worktreePath)
+	}
+
+	return nil
+}
+
+func cmdsForWorktreeExistingRemote(remote *cliContext.Remote, pr *api.PullRequest, opts *CheckoutOptions, worktreePath string) [][]string {
+	var cmds [][]string
+	remoteBranch := fmt.Sprintf("%s/%s", remote.Name, pr.HeadRefName)
+
+	refSpec := fmt.Sprintf("+refs/heads/%s:refs/remotes/%s", pr.HeadRefName, remoteBranch)
+	cmds = append(cmds, []string{"fetch", remote.Name, refSpec, "--no-tags"})
+
+	worktreeCmd := []string{"worktree", "add"}
+	if opts.Force {
+		worktreeCmd = append(worktreeCmd, "--force")
+	}
+
+	switch {
+	case opts.Detach:
+		worktreeCmd = append(worktreeCmd, "--detach", worktreePath, fmt.Sprintf("refs/remotes/%s", remoteBranch))
+	case localBranchExists(opts.GitClient, pr.HeadRefName):
+		worktreeCmd = append(worktreeCmd, worktreePath, pr.HeadRefName)
+	default:
+		worktreeCmd = append(worktreeCmd, "-b", pr.HeadRefName, worktreePath, fmt.Sprintf("refs/remotes/%s", remoteBranch))
+	}
+	cmds = append(cmds, worktreeCmd)
+
+	return cmds
+}
+
+func cmdsForWorktreeMissingRemote(pr *api.PullRequest, ref, baseURLOrName string, opts *CheckoutOptions, worktreePath string) [][]string {
+	var cmds [][]string
+
+	cmds = append(cmds, []string{"fetch", baseURLOrName, ref, "--no-tags"})
+
+	worktreeCmd := []string{"worktree", "add"}
+	if opts.Force {
+		worktreeCmd = append(worktreeCmd, "--force")
+	}
+
+	switch {
+	case opts.Detach:
+		worktreeCmd = append(worktreeCmd, "--detach", worktreePath, "FETCH_HEAD")
+	case localBranchExists(opts.GitClient, pr.HeadRefName):
+		worktreeCmd = append(worktreeCmd, worktreePath, pr.HeadRefName)
+	default:
+		worktreeCmd = append(worktreeCmd, "-b", pr.HeadRefName, worktreePath, "FETCH_HEAD")
+	}
+	cmds = append(cmds, worktreeCmd)
+
+	return cmds
 }
 
 func cmdsForExistingRemote(remote *cliContext.Remote, pr *api.PullRequest, opts *CheckoutOptions) [][]string {
